@@ -61,7 +61,7 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     context = {'form': form,
-               'baskets': Basket.objects.filter(user=request.user),
+               # 'baskets': Basket.objects.filter(user=request.user),
                }
     return render(request, 'authapp/profile.html', context)
 
