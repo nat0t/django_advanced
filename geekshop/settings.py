@@ -134,3 +134,11 @@ AUTH_USER_MODEL = 'authapp.ShopUser'
 LOGIN_URL = '/auth/login'
 
 LOGIN_REDIRECT_URL = '/'
+
+DOMAIN_NAME = 'http://127.0.0.1:8000'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '25'
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None, None
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/email-messages/'

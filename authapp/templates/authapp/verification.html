@@ -1,0 +1,10 @@
+{% extends 'authapp/base.html' %}
+
+{% block form %}
+    {% if user.is_active %}
+        <h3>Activation is successfull. You will be redirected to login page in 5 seconds.</h3>
+    {% else %}
+        <h3>Activation failed! You will be redirected to login page in 5 seconds.</h3>
+    {% endif %}
+    <meta http-equiv="refresh" content="5;url={% url 'auth:login' %}">
+{% endblock %}
