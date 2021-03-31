@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import include
@@ -28,6 +28,9 @@ urlpatterns = [
     path('auth/', include('authapp.urls', namespace='auth')),
     path('baskets/', include('basketapp.urls', namespace='baskets')),
     path('admin-staff/', include('adminapp.urls', namespace='admin_staff')),
+    path('', include('social_django.urls', namespace='social')),
+    re_path(r'^auth/verify/google/oauth2/', include('social_django.urls',
+                                                    namespace='social')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

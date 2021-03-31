@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,11 +38,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'mainapp',
     'authapp',
     'basketapp',
     'adminapp',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+with open('geekshop/google+.json', 'r') as f:
+    GOOGLE_PLUS = json.load(f)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = GOOGLE_PLUS['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = \
+    GOOGLE_PLUS['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
