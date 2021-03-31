@@ -29,8 +29,6 @@ urlpatterns = [
     path('baskets/', include('basketapp.urls', namespace='baskets')),
     path('admin-staff/', include('adminapp.urls', namespace='admin_staff')),
     path('', include('social_django.urls', namespace='social')),
-    re_path(r'^auth/verify/google/oauth2/', include('social_django.urls',
-                                                    namespace='social')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
