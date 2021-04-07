@@ -1,16 +1,16 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.urls import reverse, reverse_lazy
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.views.generic.edit import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.db import transaction
 
+from authapp.forms import UserProfileEditForm
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
-from basketapp.models import Basket
 from authapp.models import ShopUser as User
 
 
@@ -49,23 +49,6 @@ def logout(request):
     return HttpResponseRedirect(reverse('index'))
 
 
-@login_required
-def profile(request):
-    if request.method == 'POST':
-        form = UserProfileForm(data=request.POST, files=request.FILES,
-                               instance=request.user)
-        if form.is_valid:
-            form.save()
-            messages.success(request, 'Profile edited successfully.')
-            return HttpResponseRedirect(reverse('auth:profile'))
-    else:
-        form = UserProfileForm(instance=request.user)
-    context = {'form': form,
-               # 'baskets': Basket.objects.filter(user=request.user),
-               }
-    return render(request, 'authapp/profile.html', context)
-
-
 def verify(request, email, activation_key):
     user = User.objects.get(email=email)
     if user.activation_key == activation_key and \
@@ -74,3 +57,31 @@ def verify(request, email, activation_key):
         user.save()
     context = {'user': user}
     return render(request, 'authapp/verification.html', context)
+
+
+@login_required
+@transaction.atomic
+def profile(request):
+    title = 'редактирование'
+
+    if request.method == 'POST':
+        edit_form = UserProfileForm(request.POST, request.FILES,
+                                    instance=request.user)
+        profile_form = UserProfileEditForm(
+            request.POST, instance=request.user.shopuserprofile)
+        if edit_form.is_valid() and profile_form.is_valid():
+            edit_form.save()
+            return HttpResponseRedirect(reverse('index'))
+    else:
+        edit_form = UserProfileForm(instance=request.user)
+        profile_form = UserProfileEditForm(
+            instance=request.user.shopuserprofile
+        )
+
+    context = {
+        'title': title,
+        'form': edit_form,
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'authapp/profile.html', context)
