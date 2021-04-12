@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Order, OrderItem
 
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -14,6 +15,8 @@ class OrderForm(forms.ModelForm):
 
 
 class OrderItemForm(forms.ModelForm):
+    price = forms.CharField(label='цена', required=False)
+
     class Meta:
         model = OrderItem
         exclude = ()
