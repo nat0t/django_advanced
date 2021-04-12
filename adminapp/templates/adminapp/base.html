@@ -17,7 +17,7 @@
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    <a class="navbar-brand" href="{% url 'admin_staff:index' %}">GeekShop</a>
+    <a class="navbar-brand" href="{% url 'index' %}">GeekShop</a>
     <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i>
     </button>
     <!-- Navbar Search-->
@@ -47,24 +47,32 @@
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <div class="sb-sidenav-menu-heading">Приложения</div>
-                    <a class="nav-link" href="{% url 'admin_staff:admin_users' %}">
-                        <div class="sb-nav-link-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        Пользователи
-                    </a>
-                    <a class="nav-link" href="index.html">
-                        <div class="sb-nav-link-icon">
-                            <i class="fas fa-shopping-basket"></i>
-                        </div>
-                        Категории
-                    </a>
-                    <a class="nav-link" href="{% url 'admin_staff:admin_products' %}">
-                        <div class="sb-nav-link-icon">
-                            <i class="fas fa-tshirt"></i>
-                        </div>
-                        Продукты
-                    </a>
+                    {% if user.is_superuser %}
+                        <a class="nav-link" href="{% url 'admin_staff:admin_users' %}">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            Пользователи
+                        </a>
+                        <a class="nav-link" href="index.html">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-shopping-basket"></i>
+                            </div>
+                            Категории
+                        </a>
+                        <a class="nav-link" href="{% url 'admin_staff:admin_products' %}">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            Продукты
+                        </a>
+                    {% endif %}
+                <a class="nav-link" href="{% url 'ordersapp:orders_list' %}">
+                            <div class="sb-nav-link-icon">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            Список заказов
+                        </a>
                 </div>
             </div>
             <div class="sb-sidenav-footer"></div>
