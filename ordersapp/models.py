@@ -92,5 +92,14 @@ class OrderItem(models.Model):
         verbose_name = 'элемент заказа'
         verbose_name_plural = 'элементы заказа'
 
+    @staticmethod
+    def get_item(pk):
+        return OrderItem.objects.filter(pk=pk).first()
+
     def get_product_cost(self):
         return self.product.price * self.quantity
+
+    def delete(self):
+        self.product.quantity += self.quantity
+        self.product.save()
+        super(OrderItem, self).delete()
