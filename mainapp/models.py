@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 class ProductsCategory(models.Model):
     name = models.CharField(max_length=64, unique=True,
                             verbose_name='Название')
@@ -26,6 +25,12 @@ class Product(models.Model):
                               verbose_name='Фото')
     category = models.ForeignKey(ProductsCategory, on_delete=models.CASCADE,
                                  verbose_name='Категория')
+    is_active = models.BooleanField(verbose_name='активен', default=True)
 
     def __str__(self):
         return f'{self.name} | {self.category.name}'
+
+    @staticmethod
+    def get_items():
+        return Product.objects.filter(is_active=True).order_by('category',
+                                                               'name')
