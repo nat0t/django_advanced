@@ -1,8 +1,12 @@
+import os
+
 from django.conf import settings
 from django.core.cache import cache
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator
-import os
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.template.loader import render_to_string
+from django.views.decorators.cache import cache_page
 
 from mainapp.models import Product, ProductsCategory
 
@@ -14,6 +18,7 @@ def index(request):
     return render(request, 'mainapp/index.html', context)
 
 
+@cache_page(3600)
 def products(request, category_id=None, page=1):
     slides = os.listdir(os.path.join(settings.STATIC_URL[1:],
                                      'vendor/img/slides/'))
@@ -90,13 +95,11 @@ def get_products_ordered_by_price():
         key = 'products_ordered_by_price'
         products = cache.get(key)
         if products is None:
-            products = Product.objects.filter(
-                category_id=category_id).order_by('price')
+            products = Product.objects.filter(is_active=True).order_by('price')
             cache.set(key, products)
         return products
     else:
-        return Product.objects.filter(
-                category_id=category_id).order_by('price')
+        return Product.objects.filter(is_active=True).order_by('price')
 
 
 def get_products_in_category_ordered_by_price(pk):
@@ -109,3 +112,34 @@ def get_products_in_category_ordered_by_price(pk):
         return products
     else:
         return Product.objects.filter(category__pk=pk).order_by('price')
+
+
+def products_ajax(request, pk=None, page=1):
+    slides = os.listdir(os.path.join(settings.STATIC_URL[1:], 'vendor/img/slides/'))
+    if request:
+       if pk:
+           if pk == '0':
+               products = get_products_ordered_by_price()
+           else:
+               products = get_products_in_category_ordered_by_price(pk)
+
+           paginator = Paginator(products, 2)
+           try:
+               products_paginator = paginator.page(page)
+           except PageNotAnInteger:
+               products_paginator = paginator.page(1)
+           except EmptyPage:
+               products_paginator = paginator.page(paginator.num_pages)
+
+           context = {'title': 'GeekShop - каталог',
+                      'slides': slides,
+                      'categories': get_links_menu(),
+                      'products': products_paginator,
+                      }
+
+           result = render_to_string(
+                        'mainapp/includes/inc_products_content.html',
+                        context=context,
+                        request=request)
+
+           return JsonResponse({'result': result})
